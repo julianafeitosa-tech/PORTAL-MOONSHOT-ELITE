@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal da Aluna — Monaliza · Moonshot Elite</title>
+<style>
+  :root{
+    --coral:#D85A30; --coral-dark:#993C1D; --coral-bg:#FAECE7;
+    --teal:#1D9E75; --teal-dark:#0F6E56; --teal-bg:#E1F5EE;
+    --amber:#BA7517; --amber-dark:#854F0B; --amber-bg:#FAEEDA;
+    --pink:#D4537E; --pink-dark:#993556;
+    --ink:#1A1A1A; --mid:#555; --light:#8a8a86; --line:#E6E4DE;
+    --bg:#FBFAF7; --card:#FFFFFF; --surface:#F4F2EC;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg); color:var(--ink); line-height:1.5; padding:28px 18px 60px;}
+  .wrap{max-width:760px; margin:0 auto;}
+  .hd{display:flex; align-items:center; gap:14px; margin-bottom:22px;}
+  .av{width:52px; height:52px; border-radius:50%; background:var(--coral-bg); display:flex;
+      align-items:center; justify-content:center; font-weight:600; font-size:17px; color:var(--coral-dark); flex-shrink:0;}
+  .hd h1{font-size:19px; font-weight:600; margin:0;}
+  .hd p{font-size:13px; color:var(--mid); margin:2px 0 0;}
+  .bar-wrap{margin-bottom:22px;}
+  .bar-top{display:flex; justify-content:space-between; font-size:12px; color:var(--light); margin-bottom:6px;}
+  .bar{height:9px; background:var(--surface); border-radius:99px; overflow:hidden;}
+  .bar-fill{height:100%; width:52%; background:var(--coral); border-radius:99px;}
+  .metrics{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:26px;}
+  .met{background:var(--surface); border-radius:10px; padding:14px 8px; text-align:center;}
+  .met-n{font-size:23px; font-weight:600;}
+  .met-l{font-size:11px; color:var(--mid); margin-top:3px;}
+
+  .card{background:var(--card); border:0.5px solid var(--line); border-radius:14px; margin-bottom:14px; overflow:hidden;}
+  .ph{border-left:3px solid var(--coral);}
+  .ph-done{border-left-color:var(--teal);}
+  .ph-doing{border-left-color:var(--coral);}
+  .ph-next{border-left-color:var(--amber);}
+  .ph-todo{border-left-color:#cfccc4;}
+
+  .acc-hd{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:16px 20px;
+          cursor:pointer; user-select:none; flex-wrap:wrap;}
+  .acc-hd:hover{background:var(--surface);}
+  .acc-left{display:flex; align-items:center; gap:9px; flex:1; min-width:0;}
+  .acc-title{font-size:15px; font-weight:600;}
+  .acc-title span{font-size:12px; color:var(--light); font-weight:400;}
+  .chev{transition:transform .2s; color:var(--light); font-size:13px; flex-shrink:0;}
+  .open > .acc-hd .chev{transform:rotate(90deg);}
+  .acc-body{max-height:0; overflow:hidden; transition:max-height .35s ease;}
+  .open > .acc-body{max-height:3000px;}
+  .acc-inner{padding:0 20px 18px;}
+
+  .pill{font-size:11px; font-weight:600; padding:4px 11px; border-radius:99px; white-space:nowrap;}
+  .pill-done{background:var(--teal-bg); color:var(--teal-dark);}
+  .pill-doing{background:var(--coral-bg); color:var(--coral-dark);}
+  .pill-next{background:var(--amber-bg); color:var(--amber-dark);}
+  .pill-todo{background:var(--surface); color:var(--light);}
+  .sess-count{font-size:12px; color:var(--mid);}
+  .sdots{display:flex; gap:6px; align-items:center;}
+  .dot-ic{width:9px;height:9px;border-radius:50%;display:inline-block;}
+
+  ul.items{list-style:none;}
+  .item{display:flex; align-items:center; gap:11px; padding:8px 0; border-bottom:0.5px solid var(--line); font-size:13.5px;}
+  .item:last-child{border-bottom:none;}
+  .mk{width:17px;height:17px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;}
+  .mk-done{background:var(--teal);}
+  .mk-doing{background:var(--coral);}
+  .mk-todo{background:transparent;border:1.5px solid #cfccc4;}
+  .item-txt{flex:1; color:var(--mid);}
+  .item-txt.done{color:var(--ink);}
+  a.lnk{font-size:12px; color:var(--coral-dark); text-decoration:none; white-space:nowrap; font-weight:500;
+        border:0.5px solid var(--line); padding:3px 10px; border-radius:7px; background:var(--card);}
+  a.lnk:hover{background:var(--coral-bg);}
+  .todo-tag{font-size:11px; color:var(--light); font-style:italic; white-space:nowrap;}
+
+  .srow{display:flex; gap:13px; padding:12px 0; border-bottom:0.5px solid var(--line);}
+  .srow:last-child{border-bottom:none;}
+  .snum{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+        font-size:13px;font-weight:600;flex-shrink:0;}
+  .snum-done{background:var(--teal-bg); color:var(--teal-dark);}
+  .snum-open{background:var(--surface); color:var(--light);}
+  .sbody{flex:1;}
+  .sbody-t{font-size:13.5px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:7px;}
+  .sbody-t .chev2{font-size:11px; color:var(--light); transition:transform .2s;}
+  .sopened .chev2{transform:rotate(90deg);}
+  .sbody-date{font-size:11px; color:var(--light); font-weight:400;}
+  .sdetail{max-height:0; overflow:hidden; transition:max-height .35s ease;}
+  .sopened + .sdetail{max-height:1600px;}
+  .sblock{margin:10px 0 0;}
+  .sblock h4{font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--coral-dark); margin:0 0 4px;}
+  .sblock ul{list-style:none; margin:0 0 8px;}
+  .sblock li{font-size:12.5px; color:var(--mid); line-height:1.5; padding:2px 0 2px 14px; position:relative;}
+  .sblock li::before{content:"\2013"; position:absolute; left:0; color:var(--light);}
+  .sopen-note{font-size:12.5px; font-style:italic; color:var(--light); margin-top:2px;}
+  .ata-link{margin-top:8px;}
+
+  .next{background:var(--surface); border-radius:14px; padding:18px 20px; margin-top:22px;}
+  .next h2{font-size:14px; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:7px;}
+  .nrow{display:flex; gap:11px; padding:8px 0; font-size:13px; color:var(--mid); line-height:1.5;}
+  .nrow .b{color:var(--amber); flex-shrink:0; font-weight:700;}
+  .flag{color:var(--amber-dark); font-style:italic;}
+  .hint{font-size:11px; color:var(--light); text-align:center; margin-bottom:18px;}
+  footer{text-align:center; font-size:11px; color:var(--light); margin-top:32px; line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hd">
+    <div class="av">MN</div>
+    <div>
+      <h1>Monaliza &middot; Cl&iacute;nica Monelli</h1>
+      <p>Mestre do Perfil &mdash; Forma&ccedil;&atilde;o em Rinomodela&ccedil;&atilde;o &middot; M&eacute;todo Monelli</p>
+    </div>
+  </div>
+
+  <div class="bar-wrap">
+    <div class="bar-top"><span>Progresso no programa</span><span>Fase 2 de 4 &middot; em andamento</span></div>
+    <div class="bar"><div class="bar-fill"></div></div>
+  </div>
+
+  <div class="metrics">
+    <div class="met"><div class="met-n">10</div><div class="met-l">entreg&aacute;veis prontos</div></div>
+    <div class="met"><div class="met-n">2/3</div><div class="met-l">sess&otilde;es feitas</div></div>
+    <div class="met"><div class="met-n">3</div><div class="met-l">a validar</div></div>
+    <div class="met"><div class="met-n">52%</div><div class="met-l">do programa</div></div>
+  </div>
+
+  <p class="hint">Clique em cada bloco para expandir os detalhes.</p>
+
+  <div class="card open" id="sess">
+    <div class="acc-hd" onclick="toggle('sess')">
+      <div class="acc-left">
+        <span class="chev">&#9654;</span>
+        <span class="acc-title">Sess&otilde;es de consultoria <span>&middot; resumos das reuni&otilde;es</span></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="sess-count">2 de 3</span>
+        <div class="sdots"><span class="dot-ic" style="background:var(--teal)"></span><span class="dot-ic" style="background:var(--teal)"></span><span class="dot-ic" style="background:#fff;border:1px solid #cfccc4"></span></div>
+      </div>
+    </div>
+    <div class="acc-body"><div class="acc-inner">
+
+      <div class="srow">
+        <div class="snum snum-done">&#10003;</div>
+        <div class="sbody">
+          <div class="sbody-t" onclick="toggleSess(this)"><span class="chev2">&#9654;</span>Sess&atilde;o 1 &mdash; &Aacute;rvore de problema e desenho do m&eacute;todo <span class="sbody-date">&middot; [data]</span></div>
+          <div class="sdetail">
+            <div class="sblock"><h4>T&oacute;picos abordados</h4><ul>
+              <li>Constru&ccedil;&atilde;o da &aacute;rvore de problema da persona (n&atilde;o sabe lidar com intercorr&ecirc;ncias / n&atilde;o faz Full Face)</li>
+              <li>Subproblemas: perda de pacientes, baixo faturamento, posicionamento fraco, medo de tentar e errar</li>
+              <li>Ra&iacute;zes: falta de m&eacute;todo, aprendizado fragmentado, ignor&acirc;ncia anat&ocirc;mica, t&eacute;cnica com agulha n&atilde;o dominada</li>
+              <li>A t&eacute;cnica de retroinje&ccedil;&atilde;o com aspira&ccedil;&atilde;o para validar vasos</li>
+              <li>Desenho inicial do produto (formato sandu&iacute;che, ~60 dias, turma reduzida em duplas)</li>
+            </ul></div>
+            <div class="sblock"><h4>Decis&otilde;es tomadas</h4><ul>
+              <li>A anatomia &eacute; o ponto de partida do m&eacute;todo</li>
+              <li>Tr&ecirc;s pilares do M&eacute;todo Monelli: Anatomia, T&eacute;cnica e Produto (estrutura replic&aacute;vel)</li>
+              <li>O m&eacute;todo amarra "t&eacute;cnica" e n&atilde;o "agulha" (para sobreviver a mudan&ccedil;as futuras)</li>
+              <li>Produto ser&aacute; forma&ccedil;&atilde;o sandu&iacute;che de ~60 dias, primeira turma 100% ao vivo</li>
+              <li>L&aacute;bios como b&ocirc;nus de caixa r&aacute;pido; precifica&ccedil;&atilde;o e vendas como m&oacute;dulo b&ocirc;nus</li>
+            </ul></div>
+            <div class="sblock"><h4>Pr&oacute;ximos passos e to-dos</h4><ul>
+              <li>Transcrever e montar o mapa gr&aacute;fico do m&eacute;todo</li>
+              <li>Mapear os assuntos para definir quantas aulas por tema</li>
+              <li>Aprofundar o m&eacute;todo numa pr&oacute;xima sess&atilde;o</li>
+            </ul></div>
+            <div class="ata-link"><a class="lnk" href="#" target="_blank" rel="noopener">ver ata completa &#8599;</a></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="srow">
+        <div class="snum snum-done">&#10003;</div>
+        <div class="sbody">
+          <div class="sbody-t" onclick="toggleSess(this)"><span class="chev2">&#9654;</span>Sess&atilde;o 2 &mdash; Trajet&oacute;ria, posicionamento e funil <span class="sbody-date">&middot; [data]</span></div>
+          <div class="sdetail">
+            <div class="sblock"><h4>T&oacute;picos abordados</h4><ul>
+              <li>Hist&oacute;ria e trajet&oacute;ria da Monaliza (da odontologia &agrave; harmoniza&ccedil;&atilde;o, a Cl&iacute;nica Monelli)</li>
+              <li>Valores: energia positiva, n&atilde;o-estagna&ccedil;&atilde;o, naturalidade</li>
+              <li>A transforma&ccedil;&atilde;o pessoal dela com o pr&oacute;prio nariz/perfil</li>
+              <li>O funil imaginado (l&aacute;bios &rarr; rino &rarr; Full Face) e an&aacute;lise da concorr&ecirc;ncia</li>
+              <li>A t&eacute;cnica com agulha como diferencial e a quest&atilde;o da autoridade</li>
+            </ul></div>
+            <div class="sblock"><h4>Decis&otilde;es tomadas</h4><ul>
+              <li>Posicionar forte em rinomodela&ccedil;&atilde;o (ser refer&ecirc;ncia em nariz) em vez de dispersar</li>
+              <li>Diferencial: Full Face a partir do nariz (o nariz como centro do rosto)</li>
+              <li>Foco em naturalidade &mdash; real&ccedil;ar, n&atilde;o exagerar</li>
+              <li>Construir autoridade com produ&ccedil;&atilde;o intensa de antes e depois de nariz</li>
+              <li>L&aacute;bios s&oacute; entram conectados ao nariz (p&uacute;blico que quer evoluir para rino)</li>
+            </ul></div>
+            <div class="sblock"><h4>Pr&oacute;ximos passos e to-dos</h4><ul>
+              <li>Aprofundar o m&eacute;todo numa sess&atilde;o dedicada</li>
+              <li>Consultor revisar e cruzar percep&ccedil;&otilde;es sobre o funil</li>
+              <li>Definir produto de entrada e high-ticket a partir do m&eacute;todo</li>
+              <li>Come&ccedil;ar a produ&ccedil;&atilde;o de conte&uacute;do de autoridade em nariz</li>
+            </ul></div>
+            <div class="ata-link"><a class="lnk" href="#" target="_blank" rel="noopener">ver ata completa &#8599;</a></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="srow">
+        <div class="snum snum-open">3</div>
+        <div class="sbody">
+          <div class="sbody-t" style="cursor:default"><span style="width:11px"></span>Sess&atilde;o 3 <span class="sbody-date">&middot; a agendar</span></div>
+          <div class="sopen-note">Dispon&iacute;vel &mdash; pauta sugerida: aprofundar o m&eacute;todo (conte&uacute;do t&eacute;cnico das aulas) e validar naming.</div>
+        </div>
+      </div>
+
+    </div></div>
+  </div>
+
+  <div class="card ph ph-done" id="f1">
+    <div class="acc-hd" onclick="toggle('f1')">
+      <div class="acc-left"><span class="chev">&#9654;</span><span class="acc-title">Fase 1 <span>&middot; Diagn&oacute;stico e Direcionamento</span></span></div>
+      <span class="pill pill-done">conclu&iacute;da</span>
+    </div>
+    <div class="acc-body"><div class="acc-inner"><ul class="items">
+      <li class="item"><span class="mk mk-done">&#10003;</span><span class="item-txt done">Mensagem &uacute;nica: refer&ecirc;ncia em rinomodela&ccedil;&atilde;o / perfil</span></li>
+      <li class="item"><span class="mk mk-done">&#10003;</span><span class="item-txt done">ICP definido: harmonizadores que travam no nariz</span></li>
+      <li class="item"><span class="mk mk-done">&#10003;</span><span class="item-txt done">Direcionamento de posicionamento (nariz como porta do perfil)</span></li>
+      <li class="item"><span class="mk mk-todo"></span><span class="item-txt">An&aacute;lise estrat&eacute;gica de perfil nas redes</span><span class="todo-tag">a fazer</span></li>
+      <li class="item"><span class="mk mk-todo"></span><span class="item-txt">Conte&uacute;do m&iacute;nimo vi&aacute;vel para autoridade (p&oacute;s-an&aacute;lise)</span><span class="todo-tag">a fazer</span></li>
+    </ul></div></div>
+  </div>
+
+  <div class="card ph ph-doing open" id="f2">
+    <div class="acc-hd" onclick="toggle('f2')">
+      <div class="acc-left"><span class="chev">&#9654;</span><span class="acc-title">Fase 2 <span>&middot; M&eacute;todo e Produto</span></span></div>
+      <span class="pill pill-doing">em andamento</span>
+    </div>
+    <div class="acc-body"><div class="acc-inner"><ul class="items">
+      <li class="item"><span class="mk mk-done">&#10003;</span><span class="item-txt done">&Aacute;rvore de problema</span><span class="todo-tag">no Drive</span></li>
+      <li class="item"><span class="mk mk-done">&#10003;</span><span class="item-txt done">Download mental</span><span class="todo-tag">no Drive</span></li>
+      <li class="item"><span class="mk mk-done">&#10003;</span><span class="item-txt done">Dossi&ecirc; do M&eacute;todo (M&eacute;todo Monelli)</span><span class="todo-tag">no Drive</span></li>
+      <li class="item"><span class="mk mk-done">&#10003;</span><span class="item-txt done">Dossi&ecirc; do Produto (Mestre do Perfil)</span><a class="lnk" href="https://docs.google.com/document/d/1pMfd-qIfBISuzMN118_o_wXx1zXKOPVqGSFhDopTItg/edit" target="_blank" rel="noopener">abrir &#8599;</a></li>
+      <li class="item"><span class="mk mk-done">&#10003;</span><span class="item-txt done">Plano de aula da imers&atilde;o (minuto a minuto)</span><a class="lnk" href="https://docs.google.com/document/d/1x68Oj6ePRbz19BYXZs1s3lYoa7PhaDiv3n--5bMsLKU/edit" target="_blank" rel="noopener">abrir &#8599;</a></li>
+      <li class="item"><span class="mk mk-doing">&#9679;</span><span class="item-txt">Naming (m&eacute;todo + curso) &mdash; documento para aprova&ccedil;&atilde;o</span><a class="lnk" href="#" target="_blank" rel="noopener">abrir &#8599;</a></li>
+      <li class="item"><span class="mk mk-doing">&#9679;</span><span class="item-txt">Desafio do Primeiro Paciente (a detalhar)</span><span class="todo-tag">em andamento</span></li>
+      <li class="item"><span class="mk mk-doing">&#9679;</span><span class="item-txt">Validar nome do Protocolo de Seguran&ccedil;a contra Necrose</span><span class="todo-tag">a validar</span></li>
+    </ul></div></div>
+  </div>
+
+  <div class="card ph ph-next" id="f3">
+    <div class="acc-hd" onclick="toggle('f3')">
+      <div class="acc-left"><span class="chev">&#9654;</span><span class="acc-title">Fase 3 <span>&middot; Estrutura Comercial e Escala</span></span></div>
+      <span class="pill pill-next">come&ccedil;ando</span>
+    </div>
+    <div class="acc-body"><div class="acc-inner"><ul class="items">
+      <li class="item"><span class="mk mk-doing">&#9679;</span><span class="item-txt">Precifica&ccedil;&atilde;o &mdash; refer&ecirc;ncias de mercado</span><a class="lnk" href="#" target="_blank" rel="noopener">abrir &#8599;</a></li>
+      <li class="item"><span class="mk mk-todo"></span><span class="item-txt">Conte&uacute;do m&iacute;nimo vi&aacute;vel para venda</span><span class="todo-tag">a planejar</span></li>
+      <li class="item"><span class="mk mk-todo"></span><span class="item-txt">Estrat&eacute;gias de gera&ccedil;&atilde;o de caixa</span><span class="todo-tag">a fazer</span></li>
+      <li class="item"><span class="mk mk-todo"></span><span class="item-txt">Estrat&eacute;gia de venda (outro time)</span><span class="todo-tag">a fazer</span></li>
+    </ul></div></div>
+  </div>
+
+  <div class="card ph ph-todo" id="f4">
+    <div class="acc-hd" onclick="toggle('f4')">
+      <div class="acc-left"><span class="chev">&#9654;</span><span class="acc-title">Fase 4 <span>&middot; Acompanhamento e Escala</span></span></div>
+      <span class="pill pill-todo">n&atilde;o iniciada</span>
+    </div>
+    <div class="acc-body"><div class="acc-inner"><ul class="items">
+      <li class="item"><span class="mk mk-todo"></span><span class="item-txt">Esteira de produtos (Full Face a partir do nariz &mdash; sugest&atilde;o)</span></li>
+      <li class="item"><span class="mk mk-todo"></span><span class="item-txt">Formato de lan&ccedil;amento</span></li>
+    </ul></div></div>
+  </div>
+
+  <div class="next">
+    <h2>&#9873; Pr&oacute;ximos passos da Monaliza</h2>
+    <div class="nrow"><span class="b">&rarr;</span><span>Agendar a Sess&atilde;o 3 (&uacute;ltima) &mdash; pauta sugerida: aprofundar o m&eacute;todo e validar naming</span></div>
+    <div class="nrow"><span class="b">&rarr;</span><span>Aprovar o documento de naming (M&eacute;todo Monelli + Mestre do Perfil) &mdash; <span class="flag">o nome certo &eacute; o que ela sente como dela</span></span></div>
+    <div class="nrow"><span class="b">&rarr;</span><span>Definir o nome do Protocolo de Seguran&ccedil;a contra Necrose</span></div>
+    <div class="nrow"><span class="b">&rarr;</span><span>Aprovar o documento de precifica&ccedil;&atilde;o e elaborar o Desafio do Primeiro Paciente</span></div>
+  </div>
+
+  <footer>
+    Portal da Aluna &middot; Moonshot Elite<br>
+    Atualizado conforme o progresso na forma&ccedil;&atilde;o.
+  </footer>
+
+</div>
+<script>
+  function toggle(id){ document.getElementById(id).classList.toggle('open'); }
+  function toggleSess(el){ el.classList.toggle('sopened'); }
+</script>
+</body>
+</html>
